@@ -1,16 +1,16 @@
 import os
-import environ
 from pathlib import Path
 
-env = environ.Env()
-environ.Env.read_env()
-ENVIRONMENT = env
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+with open("core/.env") as env:
+    for line in env:
+        key, value = line.strip().split("=")
+        os.environ[key] = value
+
+
 SECRET_KEY = os.environ.get('SECRET_KEY')
-DEBUG = bool(os.environ.get('DEBUG'))
+DEBUG = eval(os.environ.get('DEBUG', 'False'))
 
 
 ALLOWED_HOSTS = [
