@@ -170,21 +170,30 @@ DEFAULT_CURRENCY = 'COP'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# URL para archivos estáticos
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# URL para archivos multimedia
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Directorio raíz para archivos estáticos y multimedia en producción
+ROOT_DIR = os.environ.get('ROOT_DIR')
+
+# Rutas completas para archivos estáticos y multimedia
+STATIC_ROOT = os.path.join(BASE_DIR if DEBUG else ROOT_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR if DEBUG else ROOT_DIR, 'media')
 
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, 'dist'),
 #     os.path.join(BASE_DIR, 'public'),
-# ]
+# ] 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-
+if DEBUG is False:
+    SESSION_COOKIE_SECURE = True
+    
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
