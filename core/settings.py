@@ -52,9 +52,11 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    'ckeditor',
     'corsheaders',
     'rest_framework',
     'django_filters',
+    'ckeditor_uploader',
     'rest_framework_simplejwt',
 ]
 
@@ -63,10 +65,19 @@ PROJECT_APPS = [
 ]
 
 ECOMMERCE_APPS = [
-    
+    'apps.product',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS + ECOMMERCE_APPS
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'autoParagraph': False
+    }
+}
+
+CKEDITOR_UPLOAD_PATH = "/media/"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
