@@ -11,7 +11,7 @@ class CartApiViewSet(ModelViewSet):
     queryset = Cart.objects.all()
     http_method_names = ['get', 'post', 'put', 'delete']
     filter_backends = [OrderingFilter, DjangoFilterBackend]
-    filterset_fields = ['id']
+    filterset_fields = ['id', 'status']
     ordering = ['-created']
 
 
@@ -20,5 +20,5 @@ class CartItemApiViewSet(ModelViewSet):
     queryset = CartItem.objects.all()
     http_method_names = ['get', 'post', 'put', 'delete']
     filter_backends = [OrderingFilter, DjangoFilterBackend]
-    filterset_fields = ['id']
+    filterset_fields = ['id', 'status']
     ordering = ['-created']
