@@ -11,7 +11,6 @@ from .models import Category, Product
 
 class ListCategoriesView(APIView):
     permission_classes = (permissions.AllowAny, )
-    
 
     def get(self, request, format=None):
         if Category.objects.all().exists():
@@ -24,7 +23,7 @@ class ListCategoriesView(APIView):
                     item = {}
                     item['id'] = category.id
                     item['name'] = category.name
-                    
+
                     item['sub_categories'] = []
                     for cat in categories:
                         sub_item = {}

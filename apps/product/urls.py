@@ -7,8 +7,8 @@ router_product = DefaultRouter()
 
 
 router_product.register(prefix='products',
-                      basename='products',
-                      viewset=ProductApiViewSet)
+                        basename='products',
+                        viewset=ProductApiViewSet)
 
 
 urlpatterns = [

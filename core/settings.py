@@ -18,7 +18,7 @@ ALLOWED_HOSTS = [
     '.osvilla.com.co',
     '127.0.0.1',
     'localhost',
-    
+
 ]
 
 CORS_ORIGIN_WHITELIST = [
@@ -66,6 +66,7 @@ PROJECT_APPS = [
 
 ECOMMERCE_APPS = [
     'apps.product',
+    'apps.cart',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS + ECOMMERCE_APPS
@@ -110,7 +111,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-AUTH_USER_MODEL="user.UserAccount"
+AUTH_USER_MODEL = "user.UserAccount"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -127,7 +128,7 @@ PROD_DB = {
     'USER': os.environ.get('DATABASE_USER'),
     'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
     'HOST': os.environ.get('DATABASE_HOST'),
-    'PORT':os.environ.get('DATABASE_PORT'),
+    'PORT': os.environ.get('DATABASE_PORT'),
 }
 
 # Selección de la configuración de la base de datos según el entorno.
@@ -186,14 +187,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR if DEBUG else ROOT_DIR, 'media')
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, 'dist'),
 #     os.path.join(BASE_DIR, 'public'),
-# ] 
+# ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 if DEBUG is False:
     SESSION_COOKIE_SECURE = True
-    
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

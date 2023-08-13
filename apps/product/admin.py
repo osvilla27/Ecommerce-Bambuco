@@ -1,6 +1,25 @@
 import admin_thumbnails
 from django.contrib import admin
+from django.db import IntegrityError
 from .models import Category, Product, Images, Color, Size, Variants
+
+
+def duplicate_product(self, request, queryset):
+    try:
+        for product in queryset:
+            product.pk = None
+            product.id = None
+            product.name += " Copy"
+            product.slug += "-copy"
+            product.save()
+        self.message_user(
+            request, "Selected products have been duplicated successfully.")
+    except IntegrityError:
+        self.message_user(
+            request, "Error: Duplicated slug found. Selected products were not duplicated.")
+
+
+duplicate_product.short_description = "Duplicate selected products"
 
 
 @admin_thumbnails.thumbnail('image')
@@ -28,7 +47,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin_thumbnails.thumbnail('image')
 class ImagesAdmin(admin.ModelAdmin):
-    list_display = ['image', 'name', 'image_thumbnail']
+    list_display = ['image', 'name', 'image_thumbnail', ]
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -40,6 +59,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['name', 'description']
     list_per_page = 25
     list_editable = ('compare_price', 'price', 'stock', "status", )
+    actions = [duplicate_product]
     inlines = [ProductImageInline, ProductVariantsInline]
 
 
@@ -55,8 +75,7 @@ class SizeAdmin(admin.ModelAdmin):
 
 
 class VariantsAdmin(admin.ModelAdmin):
-    list_display = ['name', 'product', 'color',
-                    'size', 'price', 'quantity', 'image_tag']
+    list_display = ['name', 'product_id', 'image_tag']
 
 
 admin.site.register(Category, CategoryAdmin)

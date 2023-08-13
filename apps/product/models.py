@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 from ckeditor_uploader.fields import RichTextUploadingField
-import os
 
 
 class Category(models.Model):
@@ -60,11 +59,11 @@ class Product(models.Model):
     stock = models.IntegerField(default=0)
     minstock = models.IntegerField(default=3)
     variant = models.CharField(
-        max_length=10, choices=VARIANTS, default='None', verbose_name='variante')
+        max_length=30, choices=VARIANTS, default='None', verbose_name='variante')
     detail = RichTextUploadingField(verbose_name='detalles')
     slug = models.SlugField(null=False, unique=True)
     status = models.CharField(
-        max_length=10, choices=STATUS, verbose_name='estado')
+        max_length=20, choices=STATUS, verbose_name='estado')
     created = models.DateTimeField(auto_now_add=True, verbose_name='creado')
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
 
@@ -75,6 +74,12 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_variants_set(self):
+        return self.product_variants.all()
+
+    def get_images_set(self):
+        return self.product_images.all()
+
     def image_tag(self):
         if self.image.url is not None:
             return mark_safe('<img src="{}" height="50"/>'.format(self.image.url))
@@ -84,7 +89,7 @@ class Product(models.Model):
 
 class Images(models.Model):
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name='producto')
+        Product, on_delete=models.CASCADE, verbose_name='products', related_name="product_images")
     name = models.CharField(max_length=50, blank=True, verbose_name='nombre')
     image = models.ImageField(
         blank=True, upload_to='photos/products', verbose_name='imagen')
@@ -135,16 +140,15 @@ class Size(models.Model):
 class Variants(models.Model):
     name = models.CharField(max_length=100, blank=True,
                             null=True, verbose_name='nombre')
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name='producto')
-    color = models.ForeignKey(
-        Color, on_delete=models.CASCADE, blank=True, null=True)
-    size = models.ForeignKey(
-        Size, on_delete=models.CASCADE, blank=True, null=True, verbose_name='talla')
-    image_id = models.IntegerField(blank=True, null=True, default=0)
+    product_id = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='producto', related_name="product_variants")
+    color_id = models.ForeignKey(
+        Color, on_delete=models.PROTECT, blank=True, null=True, verbose_name='color')
+    size_id = models.ManyToManyField(Size, blank=True, verbose_name='talla')
+    image_id = models.ForeignKey(
+        Images, on_delete=models.PROTECT, blank=True, null=True, verbose_name='imagen')
     quantity = models.IntegerField(default=1, verbose_name='cantidad')
-    price = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0, verbose_name='precio')
+    price = models.IntegerField(default=0, verbose_name='precio')
 
     class Meta:
         verbose_name = 'Variante'
@@ -153,17 +157,21 @@ class Variants(models.Model):
     def __str__(self):
         return self.name
 
+    def get_size_data(self):
+        return list(self.size_id.values_list('name', flat=True))
+
     def image(self):
-        img = Images.objects.get(id=self.image_id)
-        if img.id is not None:
-            varimage = img.image.url
-        else:
-            varimage = ""
-        return varimage
+        if self.image_id is not None:
+            return self.image_id.image.url
+        return ""
 
     def image_tag(self):
-        img = Images.objects.get(id=self.image_id)
-        if img.id is not None:
-            return mark_safe('<img src="{}" height="50"/>'.format(img.image.url))
-        else:
-            return ""
+        if self.image_id is not None:
+            return mark_safe('<img src="{}" height="50"/>'.format(self.image_id.image.url))
+        return ""
+
+    def get_image_url(self, request):
+        if self.image_id is not None:
+            varimage = self.image_id.image.url
+            return request.build_absolute_uri(varimage)
+        return None
