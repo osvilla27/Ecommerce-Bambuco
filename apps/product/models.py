@@ -5,8 +5,8 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 class Category(models.Model):
     STATUS = (
-        ('True', 'Activo'),
-        ('False', 'Desactivado'),
+        ('active', 'Activo'),
+        ('inactive', 'Desactivado'),
     )
 
     parent = models.ForeignKey(
@@ -19,7 +19,7 @@ class Category(models.Model):
     keywords = models.CharField(max_length=255)
     description = models.CharField(max_length=255, verbose_name='descripción')
     status = models.CharField(
-        max_length=10, choices=STATUS, verbose_name='estado')
+        max_length=10, choices=STATUS, default='active', verbose_name='estado')
     slug = models.SlugField(null=False, unique=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='creado')
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
@@ -31,11 +31,15 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def count_products_set(self):
+        return self.category_products.count()
+
 
 class Product(models.Model):
     STATUS = (
-        ('True', 'Activo'),
-        ('False', 'Desactivado'),
+        ('active', 'Activo'),
+        ('inactive', 'Desactivado'),
     )
 
     VARIANTS = (
@@ -47,7 +51,7 @@ class Product(models.Model):
     )
 
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, verbose_name='categoría')
+        Category, on_delete=models.CASCADE, verbose_name='categoría', related_name='category_products')
     name = models.CharField(max_length=200, unique=True, verbose_name='nombre')
     keywords = models.CharField(max_length=255, blank=True)
     description = models.TextField(max_length=255, verbose_name='descripción')
@@ -63,7 +67,7 @@ class Product(models.Model):
     detail = RichTextUploadingField(verbose_name='detalles')
     slug = models.SlugField(null=False, unique=True)
     status = models.CharField(
-        max_length=20, choices=STATUS, verbose_name='estado')
+        max_length=20, choices=STATUS, default='active', verbose_name='estado')
     created = models.DateTimeField(auto_now_add=True, verbose_name='creado')
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
 

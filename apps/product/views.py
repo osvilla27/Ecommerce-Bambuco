@@ -23,18 +23,20 @@ class ListCategoriesView(APIView):
                     item = {}
                     item['id'] = category.id
                     item['name'] = category.name
+                    item['count'] = category.count_products_set
 
-                    item['sub_categories'] = []
+                    item['sub_items'] = []
                     for cat in categories:
                         sub_item = {}
                         if cat.parent and cat.parent.id == category.id:
                             sub_item['id'] = cat.id
                             sub_item['name'] = cat.name
-                            sub_item['sub_categories'] = []
+                            sub_item['count'] = cat.count_products_set
+                            #sub_item['sub_categories'] = []
 
-                            item['sub_categories'].append(sub_item)
+                            item['sub_items'].append(sub_item)
                     result.append(item)
-            return Response({'categories': result}, status=status.HTTP_200_OK)
+            return Response(result, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'No categories found'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

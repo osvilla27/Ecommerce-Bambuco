@@ -4,10 +4,18 @@ from apps.product.models import Product, Variants
 
 
 class Cart(models.Model):
+    STATUS = (
+        ('active', 'Activo'),
+        ('inactive', 'Desactivado'),
+    )
+
+    id = models.CharField(primary_key=True, max_length=250, blank=True)
     user_id = models.OneToOneField(
         UserAccount, on_delete=models.CASCADE, null=True, verbose_name='usuario')
     created = models.DateTimeField(auto_now_add=True, verbose_name='creado')
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
+    status = models.CharField(
+        max_length=20, choices=STATUS, default='active',verbose_name='estado')
 
     def __str__(self):
         return f'{self.id} {self.updated}'
@@ -30,8 +38,8 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     STATUS = (
-        ('True', 'Activo'),
-        ('False', 'Desactivado'),
+        ('active', 'Activo'),
+        ('inactive', 'Desactivado'),
     )
 
     product_id = models.ForeignKey(
@@ -42,7 +50,7 @@ class CartItem(models.Model):
         Variants, on_delete=models.CASCADE, blank=True, null= True, verbose_name='variante')
     quantity = models.IntegerField(default=1, verbose_name='cantidad')
     status = models.CharField(
-        max_length=20, choices=STATUS, verbose_name='estado')
+        max_length=20, choices=STATUS, default='active', verbose_name='estado')
     created = models.DateTimeField(auto_now_add=True, verbose_name='creado')
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
 

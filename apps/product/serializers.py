@@ -2,6 +2,18 @@ from rest_framework import serializers
 from .models import Category, Product, Variants, Color, Size, Images
 
 
+class CategorySerializer(serializers.ModelSerializer):
+
+    count = serializers.SerializerMethodField('get_count_products')
+    
+    def get_count_products(self, obj):
+        return obj.count_products_set
+
+    class Meta:
+        model = Category
+        fields = '__all__'
+        
+
 class ColorSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -92,3 +104,5 @@ class ProductSerializer(serializers.ModelSerializer):
             'updated',
             'variants'
         ]
+
+
