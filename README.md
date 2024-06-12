@@ -1,3 +1,3 @@
 # Ecommerce-Bambuco
 Ecommerce | Bambuco
-Django
+- Django REST framework 
